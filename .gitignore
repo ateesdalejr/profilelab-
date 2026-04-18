@@ -205,3 +205,21 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# profilelab — runtime state (not source)
+state/pending/*
+!state/pending/.gitkeep
+state/photos/*
+!state/photos/.gitkeep
+state/metrics.db
+state/metrics.db-journal
+state/autoresearch.jsonl
+state/secrets.env
+
+# profilelab — OS / local-only
+.DS_Store
+.vscode/
+.idea/
+*.local.json
+*.local.yaml
+

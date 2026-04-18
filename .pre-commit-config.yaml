@@ -1,0 +1,44 @@
+repos:
+  - repo: local
+    hooks:
+      - id: driver-ruff-check
+        name: ruff check (driver)
+        entry: bash -c 'cd drivers/macos-iphone-mirroring && uv run ruff check --fix "$@"' --
+        language: system
+        files: ^drivers/macos-iphone-mirroring/.*\.py$
+        pass_filenames: false
+
+      - id: driver-ruff-format
+        name: ruff format (driver)
+        entry: bash -c 'cd drivers/macos-iphone-mirroring && uv run ruff format "$@"' --
+        language: system
+        files: ^drivers/macos-iphone-mirroring/.*\.py$
+        pass_filenames: false
+
+      - id: driver-pyright
+        name: pyright (driver)
+        entry: bash -c 'cd drivers/macos-iphone-mirroring && uv run pyright'
+        language: system
+        files: ^drivers/macos-iphone-mirroring/.*\.py$
+        pass_filenames: false
+
+      - id: orchestrator-ruff-check
+        name: ruff check (orchestrator)
+        entry: bash -c 'cd container/orchestrator && uv run ruff check --fix "$@"' --
+        language: system
+        files: ^container/orchestrator/.*\.py$
+        pass_filenames: false
+
+      - id: orchestrator-ruff-format
+        name: ruff format (orchestrator)
+        entry: bash -c 'cd container/orchestrator && uv run ruff format "$@"' --
+        language: system
+        files: ^container/orchestrator/.*\.py$
+        pass_filenames: false
+
+      - id: orchestrator-pyright
+        name: pyright (orchestrator)
+        entry: bash -c 'cd container/orchestrator && uv run pyright'
+        language: system
+        files: ^container/orchestrator/.*\.py$
+        pass_filenames: false
