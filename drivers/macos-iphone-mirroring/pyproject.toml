@@ -40,6 +40,8 @@ pythonVersion = "3.12"
 include = ["src", "tests"]
 reportMissingTypeStubs = "warning"
 reportUnknownMemberType = "warning"
+# FastAPI registers handlers via decorators; pyright can't see the use-site.
+reportUnusedFunction = false
 
 [tool.ruff]
 target-version = "py312"
@@ -55,8 +57,10 @@ select = [
     "UP",  # pyupgrade
     "RUF", # ruff-specific
     "SIM", # flake8-simplify
-    "TCH", # flake8-type-checking
 ]
+# TCH (flake8-type-checking) intentionally omitted — Pydantic resolves
+# annotations at runtime, and TC003 would move pydantic-used imports into
+# TYPE_CHECKING blocks that Pydantic can't see.
 ignore = [
     "E501", # line length handled by formatter
 ]
