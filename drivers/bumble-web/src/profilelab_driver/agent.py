@@ -1,7 +1,7 @@
-"""FastAPI entrypoint for the macOS iPhone Mirroring driver.
+"""FastAPI entrypoint for the Bumble Web driver.
 
-Contract in ../../../docs/drivers.md. v0 implements /health and /reconnect;
-flow endpoints return 501 until M0 clears and record-replay is wired up.
+Contract in ../../../docs/drivers.md. v0 implements /health and /reconnect
+honestly; flow endpoints stay 501 until M1 wires up real Playwright flows.
 """
 
 from __future__ import annotations
@@ -20,38 +20,35 @@ from .schemas import (
     ReconnectResponse,
     SaveProfileRequest,
 )
-from .session import SessionTracker
 
-DRIVER_NAME = "macos-iphone-mirroring"
+DRIVER_NAME = "bumble-web"
 
 
 def create_app() -> FastAPI:
     app = FastAPI(
-        title="profilelab macOS driver",
+        title="profilelab Bumble Web driver",
         version=__version__,
-        description="iPhone Mirroring + cliclick/pynput driver for profilelab.",
+        description="Playwright-based driver for Bumble Web (bumble.com/app).",
     )
-    tracker = SessionTracker()
-    app.state.session_tracker = tracker
 
     @app.get("/health", response_model=HealthResponse)
     def health() -> HealthResponse:
-        state = tracker.refresh()
+        # v0: the process answering means the driver is up. Once we add a
+        # Playwright browser context, this should report whether the browser
+        # is alive and whether the logged-in session is valid.
         return HealthResponse(
             ok=True,
-            connected=state.connected,
-            session_age_s=state.session_age_s,
+            connected=False,
+            session_age_s=0,
             driver=DRIVER_NAME,
             version=__version__,
         )
 
     @app.post("/reconnect", response_model=ReconnectResponse)
     def reconnect() -> ReconnectResponse:
-        # v0: iPhone Mirroring reconnect requires a real user action (Touch ID /
-        # click the menu bar). We refresh state and report honestly. M1's
-        # reconnect.py will add best-effort relaunch via `open -a`.
-        state = tracker.refresh()
-        return ReconnectResponse(ok=True, connected=state.connected)
+        # v0: no browser context to reconnect yet. M1 will spin up a fresh
+        # browser context from the stored state and report back.
+        return ReconnectResponse(ok=True, connected=False)
 
     @app.post(
         "/flow/edit_photo",
@@ -59,7 +56,7 @@ def create_app() -> FastAPI:
         responses={501: {"model": ErrorResponse}},
     )
     def edit_photo(_: EditPhotoRequest) -> FlowResponse:
-        raise _not_implemented("edit_photo flow awaits M1 (record-replay)")
+        raise _not_implemented("edit_photo flow awaits M1 (Playwright)")
 
     @app.post(
         "/flow/edit_prompt",
@@ -67,7 +64,7 @@ def create_app() -> FastAPI:
         responses={501: {"model": ErrorResponse}},
     )
     def edit_prompt(_: EditPromptRequest) -> FlowResponse:
-        raise _not_implemented("edit_prompt flow awaits M1 (record-replay)")
+        raise _not_implemented("edit_prompt flow awaits M1 (Playwright)")
 
     @app.post(
         "/flow/edit_bio",
@@ -75,7 +72,7 @@ def create_app() -> FastAPI:
         responses={501: {"model": ErrorResponse}},
     )
     def edit_bio(_: EditBioRequest) -> FlowResponse:
-        raise _not_implemented("edit_bio flow awaits M1 (record-replay)")
+        raise _not_implemented("edit_bio flow awaits M1 (Playwright)")
 
     @app.post(
         "/flow/save_profile",
@@ -83,7 +80,7 @@ def create_app() -> FastAPI:
         responses={501: {"model": ErrorResponse}},
     )
     def save_profile(_: SaveProfileRequest) -> FlowResponse:
-        raise _not_implemented("save_profile flow awaits M1 (record-replay)")
+        raise _not_implemented("save_profile flow awaits M1 (Playwright)")
 
     @app.get(
         "/metrics",
@@ -91,7 +88,7 @@ def create_app() -> FastAPI:
         responses={501: {"model": ErrorResponse}},
     )
     def metrics() -> MetricsResponse:
-        raise _not_implemented("metrics read awaits M1 (vision-LLM OCR)")
+        raise _not_implemented("metrics read awaits M1 (DOM scrape + vision-LLM fallback)")
 
     return app
 
@@ -103,7 +100,6 @@ def _not_implemented(detail: str) -> HTTPException:
     )
 
 
-# uvicorn entrypoint: `uv run uvicorn profilelab_driver.agent:app`
 app = create_app()
 
 

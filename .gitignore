@@ -223,3 +223,9 @@ state/secrets.env
 *.local.json
 *.local.yaml
 
+# profilelab — driver probe / browser state
+drivers/*/probe_output/
+drivers/*/browser-state/
+drivers/*/playwright-report/
+drivers/*/.playwright-cache/
+

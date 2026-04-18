@@ -1,6 +1,8 @@
 # profilelab driver contract
 
-A **driver** is a host-native HTTP service that applies profile edits to a target platform (v0: Bumble via iPhone Mirroring on macOS). The profilelab container is platform-agnostic — it interacts with whichever driver is reachable at `DRIVER_URL` (default `http://host.docker.internal:8765`). Any new platform integration (Android + ADB, libimobiledevice, Hinge-web, LinkedIn-web, etc.) is a new driver that satisfies this contract.
+A **driver** is an HTTP service that applies profile edits to a target platform. The profilelab container is platform-agnostic — it interacts with whichever driver is reachable at `DRIVER_URL` (default `http://localhost:8765`, pointing at the in-container driver process). Any new platform integration (LinkedIn web, Hinge, Android via ADB, etc.) is a new driver that satisfies this contract.
+
+**v0 reference driver** is `drivers/bumble-web/` — Playwright-based, runs in-container. Earlier designs called for a macOS host agent driving iPhone Mirroring; that path is abandoned (Apple filters synthetic events into iPhone Mirroring — see commit history).
 
 All endpoints accept and return JSON unless otherwise noted.
 

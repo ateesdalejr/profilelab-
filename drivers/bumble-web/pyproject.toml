@@ -1,14 +1,13 @@
 [project]
-name = "profilelab-driver-macos"
+name = "profilelab-driver-bumble-web"
 version = "0.0.1"
-description = "macOS iPhone Mirroring driver for profilelab — record-replay Bumble flows via cliclick/pynput"
+description = "Bumble Web driver for profilelab — Playwright-based profile edits and metric reads"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "fastapi>=0.115",
     "uvicorn[standard]>=0.32",
-    "pynput>=1.7.7",
-    "mss>=9.0.2",
+    "playwright>=1.48",
     "httpx>=0.28",
     "pydantic>=2.9",
     "pydantic-settings>=2.6",
@@ -19,12 +18,14 @@ dependencies = [
 
 [project.scripts]
 profilelab-driver = "profilelab_driver.agent:main"
+profilelab-driver-probe = "profilelab_driver.probe:main"
 
 [dependency-groups]
 dev = [
     "pyright>=1.1.390",
     "ruff>=0.8",
     "pytest>=8.3",
+    "pytest-asyncio>=0.24",
 ]
 
 [build-system]
@@ -49,20 +50,20 @@ line-length = 100
 
 [tool.ruff.lint]
 select = [
-    "E",   # pycodestyle errors
-    "W",   # pycodestyle warnings
-    "F",   # pyflakes
-    "I",   # isort
-    "B",   # flake8-bugbear
-    "UP",  # pyupgrade
-    "RUF", # ruff-specific
-    "SIM", # flake8-simplify
+    "E",
+    "W",
+    "F",
+    "I",
+    "B",
+    "UP",
+    "RUF",
+    "SIM",
 ]
 # TCH (flake8-type-checking) intentionally omitted — Pydantic resolves
 # annotations at runtime, and TC003 would move pydantic-used imports into
 # TYPE_CHECKING blocks that Pydantic can't see.
 ignore = [
-    "E501", # line length handled by formatter
+    "E501",
 ]
 
 [tool.ruff.lint.per-file-ignores]
@@ -70,3 +71,4 @@ ignore = [
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+asyncio_mode = "auto"
